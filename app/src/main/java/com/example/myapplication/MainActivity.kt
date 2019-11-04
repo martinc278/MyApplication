@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
     private val CREATE_BOTTLE_REQUEST_CODE = 1
+    private val listBottle: ArrayList<Bottle?> = arrayListOf()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == CREATE_BOTTLE_REQUEST_CODE && data!=null) {
             val bottle: Bottle = data.getSerializableExtra(CREATED_BOTTLE_EXTRA_KEY) as Bottle
             Toast.makeText(this@MainActivity, "Nom : " + bottle.nom+" \nPrix : "+bottle.prix, Toast.LENGTH_LONG).show()
+            listBottle.add(bottle)
         }
     }
 
