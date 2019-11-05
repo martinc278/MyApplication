@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +26,10 @@ class MainActivity : AppCompatActivity() {
         }*/
 
         recyclerView = findViewById<RecyclerView>(R.id.a_rcv_bottles)
-        val adapter = BottleAdapter(listBottle)
+        val adapter = BottleAdapter(listBottle, AdapterView.OnItemClickListener { parent, view, position, id ->
+            listBottle.removeAt(position)
+            recyclerView.adapter?.notifyDataSetChanged()
+        })
         recyclerView.adapter = adapter
 
         val layoutManager = LinearLayoutManager(this)
