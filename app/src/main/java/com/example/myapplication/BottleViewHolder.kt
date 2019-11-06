@@ -19,6 +19,4 @@ class BottleViewHolder(rootView: View, onItemClickListener: AdapterView.OnItemCl
             onItemClickListener.onItemClick(null, it, adapterPosition, 0L)
         }
     }
-
-
 }
