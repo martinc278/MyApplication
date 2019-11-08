@@ -2,8 +2,11 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 
@@ -40,6 +43,30 @@ class MainActivity : AppCompatActivity(), CreateBottleFragment.CreateBottleFragm
 
 
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                listBottle.clear()
+                displayListFragment()
+                true
+            }
+            R.id.action_favorite -> {
+                // User chose the "Favorite" action, mark the current item as a favorite...
+                Toast.makeText(this, "Favorite", Toast.LENGTH_SHORT).show()
+                true
+            }
+            // If we got here, the user's action was not recognized.
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 
     fun addBottleView(view: View) {
         /*val testBottle = Bottle("Chateau MC", 150);
