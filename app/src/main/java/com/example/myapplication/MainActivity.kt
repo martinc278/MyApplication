@@ -9,22 +9,29 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), CreateBottleFragment.CreateBottleFragmentInteractionListener, BottleListFragment.BottleListFragmentInteractionListener {
+
 
 
 
     private val CREATE_BOTTLE_REQUEST_CODE = 1
     private val listBottle : ArrayList<Bottle> = arrayListOf()
     private lateinit var recyclerView: RecyclerView
+    private lateinit var bottleService: BottleService
+    private var SERVER_BASE_URL: String = "https://cellar-api.gaetanmaisse.now.sh"
+    private var CELLAR_ID: String = "c514a40c4c0ee278311955ac5f69de8a"
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        displayListFragment()
 
         this.findViewById<Button>(R.id.a_bottle_ist).setOnClickListener{
             displayListFragment()
@@ -34,13 +41,24 @@ class MainActivity : AppCompatActivity(), CreateBottleFragment.CreateBottleFragm
             displayCreateFragment()
         }
 
+        displayListFragment()
+
+
         /*val btnAddBottle = findViewById<Button>(R.id.firstButton)
         btnAddBottle.setOnClickListener {
             val testBottle = Bottle("Chateau MC", 150);
             Toast.makeText(this@MainActivity, "Nom : " + testBottle.nom+" \nPrix : "+testBottle.prix, Toast.LENGTH_LONG).show()
         }*/
 
+        val retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(SERVER_BASE_URL)
+            .build()
 
+        bottleService = retrofit.create<BottleService>(BottleService::class.java)
+
+        //displayListFragment()
+        getBottlesFromServer()
 
     }
 
@@ -77,7 +95,30 @@ class MainActivity : AppCompatActivity(), CreateBottleFragment.CreateBottleFragm
         startActivityForResult(intent, CREATE_BOTTLE_REQUEST_CODE)
     }
 
+    fun getBottlesFromServer(){
+        bottleService.getBottles(CELLAR_ID)
+            .enqueue(object : Callback<List<Bottle>> {
+                override fun onResponse(
+                    call: Call<List<Bottle>>,
+                    response: Response<List<Bottle>>
+                ) {
+                    val allBottles = response.body()
+                    listBottle.clear()
+                    if(allBottles!=null) {
+                        listBottle.addAll(allBottles)
+                    }
+                    displayListFragment()
+
+                }
+
+                override fun onFailure(call: Call<List<Bottle>>, t: Throwable) {
+                    // DO THINGS
+                }
+            })
+    }
+
     fun displayListFragment(){
+
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         val fragment = BottleListFragment()
 
